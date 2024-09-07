@@ -6,6 +6,9 @@ export class FileMover {
   filePath: string;
   targetDir: string = "./";
 
+  // the name of the file if it was renamed
+  fileName?: string;
+
   constructor(file: string) {
     this.setTargetDir();
     this.filePath = path.resolve(process.cwd(), file);
@@ -21,42 +24,35 @@ export class FileMover {
     this.targetDir = config.targetDir;
   }
 
-  validate() {
+  validateFilePath(): boolean {
     // check that a file was provided
     if (!this.filePath) {
-      console.error("Please provide a file to upload");
-      process.exit(1);
+      return false;
     }
 
     // check the path and ensure it exists
     if (!fs.existsSync(this.filePath)) {
-      console.error("File does not exist");
-      process.exit(1);
+      return false;
     }
+
+    return true;
   }
 
-  private getMimeType(filePath: string) {
-    const ext = path.extname(filePath).toLowerCase();
-    switch (ext) {
-      case ".png":
-        return "image/png";
-      case ".jpg":
-        return "image/jpeg";
-      case ".jpeg":
-        return "image/jpeg";
-      case ".gif":
-        return "image/gif";
-      default:
-        throw new Error(`Unsupported file type: ${ext}`);
+  validateTargetPath(): boolean {
+    // Does this exact file already exist?
+    if (fs.existsSync(this.targetDir + this.fileName)) {
+      return true;
     }
+
+    return false;
   }
 
   moveToTargetDir() {
     try {
-      this.validate();
-
-      const fileName = path.basename(this.filePath); // Extract the file name from the path
-      const targetPath = path.join(this.targetDir, fileName); // Create the full target path
+      // Extract the file name from the path
+      const fileName = path.basename(this.filePath);
+      // Create the full target path
+      const targetPath = path.join(this.targetDir, fileName);
 
       console.log(`Copying file to ${targetPath}...`);
 
@@ -64,9 +60,14 @@ export class FileMover {
       fs.copyFileSync(this.filePath, targetPath);
 
       console.log("File copied successfully.");
+      process.exit(1);
     } catch (error) {
       console.error("Error during file copy:", error);
       process.exit(1);
     }
+  }
+
+  setFileName(name: string) {
+    this.fileName = name;
   }
 }
