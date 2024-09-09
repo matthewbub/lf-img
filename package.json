@@ -1,10 +1,10 @@
 {
   "name": "lf-img",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "a local first image manager for static sites",
   "main": "index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "rm -rf dist && tsc"
   },
   "keywords": [],
   "author": "6matbub@gmail.com",

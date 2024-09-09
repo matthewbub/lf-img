@@ -38,7 +38,7 @@ export const init = () => {
     });
 };
 
-export const move = (options: {
+export const move = async (options: {
   file?: string;
   name?: string;
   upsert?: boolean;
@@ -54,7 +54,7 @@ export const move = (options: {
   // if the user wants to rename the file
   // this is where we set the name
   if (!options.name) {
-    inquirer
+    await inquirer
       .prompt([
         {
           type: "input",
@@ -64,7 +64,6 @@ export const move = (options: {
         },
       ])
       .then((answers: { name: string }) => {
-        console.log("Name will be set to: ", answers.name);
         fileMover.setFileName(answers.name);
       });
   } else {
@@ -72,18 +71,23 @@ export const move = (options: {
   }
 
   // does the file already exist in the target directory?
-  // if (fileMover.validateTargetPath()) {
-  //   console.log("File already exists");
+  if (fileMover.validateTargetPath() && !options.upsert) {
+    // overwrite flag wasn't provided
+    // does the user want to overwrite the file?
+    const { overwrite } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "overwrite",
+        message: "File already exists. Overwrite?",
+        default: true,
+      },
+    ]);
 
-  //   // does the user want to overwrite the file?
-  //   if (!options.upsert) {
-  //     return;
-  //   } else {
-  //     console.log("Overwriting file");
-  //   }
-
-  //   return;
-  // }
+    if (!overwrite) {
+      console.log("Process aborted.");
+      process.exit(1);
+    }
+  }
 
   if (fileMover.validateFilePath()) {
     fileMover.moveToTargetDir();
