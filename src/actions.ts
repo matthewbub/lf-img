@@ -51,6 +51,8 @@ export const move = async (options: {
 
   const fileMover = new FileMover(options.file);
 
+  /* RENAME FILE */
+
   // if the user wants to rename the file
   // this is where we set the name
   if (!options.name) {
@@ -69,6 +71,8 @@ export const move = async (options: {
   } else {
     fileMover.setFileName(options.name);
   }
+
+  /* OVERWRITE FILE */
 
   // does the file already exist in the target directory?
   if (fileMover.validateTargetPath() && !options.upsert) {
@@ -89,6 +93,9 @@ export const move = async (options: {
     }
   }
 
+  /* MOVE FILE */
+
+  // move the file to the target directory
   if (fileMover.validateFilePath()) {
     fileMover.moveToTargetDir();
   } else {

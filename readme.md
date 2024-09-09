@@ -1,18 +1,32 @@
 # lf-img
 
-a **l**ocal **f**irst **im**a**g**e manager for static sites
+A local first image manager for static sites
 
-## set up
+## Set Up
 
 ```sh
-npx lf-img init
+# TODO
+# npx lf-img init
 ```
 
 ```sh
-npx lf-img move -f ./path/to/image.png
+# TODO
+# npx lf-img move -f ./path/to/image.png
 ```
 
-## roadmap
+## Dev usage
+
+```sh
+pnpm run build
+node dist/index.js init
+
+# move an image
+node dist/index.js move --file ./path/to/image.png --name image.png --upsert
+```
+
+The `config.json` file is used to store the target directory for the images.
+
+## Roadmap
 
 - [x] move file to a configured directory
 - [x] rename file
